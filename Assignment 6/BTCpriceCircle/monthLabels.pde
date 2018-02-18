@@ -1,0 +1,22 @@
+
+void monthLabels(float rotationAngle) {    
+  String[] months = {" ", "J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"};
+  textSize(10);
+  stroke(0);
+  fill(0, 0, 0);
+  textAlign(CENTER);
+  rotate(theta*2+rotationAngle); //rotate to starting point
+
+  for (int i = 0; i < numMonths + numNewYears; i++) {
+    strokeWeight(1.0);
+    rotate(theta);
+    text(months[(i+startMonth) % 13], 0, -outerR-(height/2*0.02)); //draw month label with buffer
+
+    if (months[(i+startMonth) % 13] == " ") { //draw thicker line between years
+      strokeWeight(2.0);
+      line(0, round(-innerR), 0, round(-height/2*0.95));
+    } else { //draw month line
+      line(0, round(-innerR), 0, round(-outerR + textAscent()/2));
+    }
+  }
+}
