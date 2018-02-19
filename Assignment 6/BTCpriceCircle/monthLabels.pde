@@ -13,16 +13,17 @@ void monthLabels(float rotationAngle) {
     rotate(theta);
     text(months[(i+startMonth) % 13], 0, -outerR-(height/2*0.02)); //draw month label with buffer
     // Highlight the label which is beneath the price scale
-    if(i==index){
+    if (i==index) {
       strokeWeight(3.0);
       stroke(255, 200, 50);
-    }
-    else{
+    } else {
       strokeWeight(1.0);
       stroke(0);
     }
     if (months[(i+startMonth) % 13] == " ") { //draw thicker line between years
       strokeWeight(2.0);
+      if (i==index)
+        stroke(255, 100, 50);
       line(0, round(-innerR), 0, round(-height/2*0.95));
     } else { //draw month line
       line(0, round(-innerR), 0, round(-outerR + textAscent()/2));

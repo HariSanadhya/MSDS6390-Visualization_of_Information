@@ -6,7 +6,7 @@ void priceScale() {
   strokeWeight(3);
   textSize(10);
   //fill(0, 0, 0);
-    fill(0, 0, 51);
+  fill(0, 0, 51);
   textAlign(CENTER);
   int lineLength = round((outerR - innerR - textAscent()*axisLabels.length) / axisLabels.length); //calculate length of line between labels
 

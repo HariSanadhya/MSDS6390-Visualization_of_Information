@@ -1,6 +1,6 @@
 void yearLabels(float rotationAngle) {    
   String[] years = {"2012", "2013", "2014", "2015", "2016", "2017"};
-  
+
   textSize(10);
   fill(0, 0, 0);
   textAlign(LEFT);

@@ -1,23 +1,23 @@
 // Function to display static text on the sides
-void textOnSide(){
+void textOnSide() {
   textAlign(LEFT);
   textSize(15);
   text("ASSIGNMENT 6: BTC Price", 710, 20);
   text("Team: Jack, Hari, Ireti", 710, 40);
-  
+
   text("Legend", 710, 80);
   textSize(13);
   fill(35, 95, 15);
   text("Highest price reached in the month", 710, 100);
-  fill(110,0, 50);
+  fill(110, 0, 50);
   text("Lowest price reached in the month", 710, 115);
   fill(50, 10, 255);
   text("Opening price for the month", 710, 130);
   fill(164, 42, 42);
   text("Closing proce of the month", 710, 145);
   fill(0);
-  text(findRcdIndexBeneathPriceScale(), 710, 190);
-
+  text("* NOTE: Data plotted on log10 scale", 710, 170);
+  text(findRcdIndexBeneathPriceScale(), 710, 220);
 }
 
 //function to get the data to be displayed on the side corresponding to the selected month from the graph

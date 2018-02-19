@@ -17,7 +17,7 @@ class Data {
   float[] volume_traded;
   int[] trades_count; 
 
-  Data(String path) throws Exception{
+  Data(String path) throws Exception {
     Table df = loadTable(path, "header,csv"); //read in data
     //initialize object variables
     price_open = new float[df.getRowCount()];
@@ -36,12 +36,12 @@ class Data {
       price_close[i] = row.getFloat("price_close");
       volume_traded[i] = row.getFloat("volume_traded");
       trades_count[i] = row.getInt("trades_count");    
-      time_period_start.add(LocalDate.parse(row.getString(0).substring(0,10),DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+      time_period_start.add(LocalDate.parse(row.getString(0).substring(0, 10), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
       //new SimpleDateFormat("yyyy-MM-dd").parse(row.getString(0).substring(0,10)));
-      time_period_end.add(LocalDate.parse(row.getString(1).substring(0,10),DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-      time_open.add(LocalDate.parse(row.getString(2).substring(0,10),DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-      time_close.add(LocalDate.parse(row.getString(3).substring(0,10),DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-      
+      time_period_end.add(LocalDate.parse(row.getString(1).substring(0, 10), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+      time_open.add(LocalDate.parse(row.getString(2).substring(0, 10), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+      time_close.add(LocalDate.parse(row.getString(3).substring(0, 10), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+
       i++; //increment dummy iterator for variable arrays
     }
   }

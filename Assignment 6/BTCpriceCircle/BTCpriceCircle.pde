@@ -53,7 +53,7 @@ void draw() {
     yearLabels(rotationAngle); //plots year labels
     popMatrix();
     //print(btc.price_high.length);
-    
+
     //plotting price variables from Data object
     pushMatrix();
     plotPrice(btc.price_high, color(35, 95, 15), rotationAngle); //green
