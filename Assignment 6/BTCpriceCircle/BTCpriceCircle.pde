@@ -11,6 +11,7 @@ int startMonth; //numberic month number of first month
 PGraphics graphic;
 PImage image;
 float clickX, clickY;
+float lastTimeMovedAngle = 0;
 float rotationAngle = 0;
 PVector a, b;
 int[] indexToExclude = {5, 18, 31, 44, 57, 70, 83};
