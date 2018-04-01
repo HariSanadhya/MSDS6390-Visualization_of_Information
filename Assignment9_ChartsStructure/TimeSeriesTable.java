@@ -20,7 +20,7 @@ import processing.awt.*;
 public class TimeSeriesTable extends Table {
   public static String sketchDataPath;
   private int categoricalColumnIndex;
-  public TimeSeriesTable summaryData;
+  public Table summaryData;
   private String[] formats = { "mm/dd/yyyy", "mmddyyyy", "mm/dd/yyyy hh:mm:ss", "mm/dd/yyyy hhmmss",
       "mmddyyyy hhmmss" };
 
@@ -233,7 +233,7 @@ public class TimeSeriesTable extends Table {
         return getCatIndex(currentCat, curCatIndex, !hueToFind.isEmpty(), summaryDataRcd);
       }
     }
-    TimeSeriesTable temp1 = new TimeSeriesTable();
+    Table temp1 = new Table();
     // temp1.addColumn(this.getColumnTitle(categoricalColumnIndex),
     // this.getColumnType(categoricalColumnIndex));
     // temp1.addColumn(this.getColumnTitle(1), this.getColumnType(1));
@@ -295,7 +295,7 @@ public class TimeSeriesTable extends Table {
       PApplet obj = new PApplet();
       System.out.println(obj.sketchPath());
       PrintWriter file = obj.createWriter(sketchDataPath + "/file " + new java.util.Date().hashCode() + ".csv");
-      this.summaryData.writeCSV(file);
+      this.summaryData.write(file);
       System.out.println("sdjkfasdkj");
     } catch (Exception exp) {
       System.out.println(exp);
