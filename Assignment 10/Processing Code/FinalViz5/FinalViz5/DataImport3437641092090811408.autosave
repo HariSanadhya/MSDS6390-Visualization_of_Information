@@ -1,0 +1,295 @@
+import java.sql.*;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+
+import processing.core.PApplet;
+import processing.data.Table;
+import processing.data.TableRow;
+
+public class DataImport {
+  private MySQLConnect mysqlConnect = new MySQLConnect();
+  public Table actualData, dataToPlot;
+  private Table transformedDataBackup;
+  public float minReviews = 1000;
+  public float maxReviews = 0;
+
+  public void restoreData() {
+    dataToPlot = transformedDataBackup.copy();
+  }
+
+  private void setMaxMinReviews() {
+    minReviews = 1000;
+    maxReviews = 0;
+    for (TableRow row : dataToPlot.rows()) {
+      for (int i = 15; i <= 27; i++) {
+        if (minReviews > row.getFloat(i))
+          minReviews = row.getFloat(i);
+        if (maxReviews < row.getFloat(i))
+          maxReviews = row.getFloat(i);
+      }
+    }
+    // PApplet.println("minReviews, maxReviews", minReviews, maxReviews);
+  }
+
+  public DataImport(PApplet object) {
+    // default is to read from csv file
+    actualData = readDataFromCSV(object);
+    dataToPlot = transformData(actualData, true);
+    transformedDataBackup = dataToPlot.copy();
+    setMaxMinReviews();
+  }
+
+  private Table transformData(Table data, boolean initial) {
+    Table logData = data.copy();
+    if (initial) {
+      String[] columnName = { "transformed_2005", "transformed_2006", "transformed_2007", "transformed_2008", 
+        "transformed_2009", "transformed_2010", "transformed_2011", "transformed_2012", "transformed_2013", 
+        "transformed_2014", "transformed_2015", "transformed_2016", "transformed_2017" };
+      for (String column : columnName) {
+        logData.addColumn(column, Table.FLOAT);
+      }
+    }
+    for (TableRow row : logData.rows()) {
+      for (int i = 2; i <= 14; i++)
+        row.setFloat(i + 13, (row.getFloat(i) == 0) ? 0 : PApplet.pow(row.getFloat(i), 0.25f));
+    }
+    logData.print();
+    return logData;
+  }
+
+  //
+  public DataImport(PApplet object, boolean mySql) {
+    // if mySql, then read data from mySQL database else read data from csv file
+    if (mySql) {
+      actualData = readDataFromMySQL(object);
+    } else {
+      actualData = readDataFromCSV(object);
+    }
+    dataToPlot = transformData(actualData, true);
+    transformedDataBackup = dataToPlot.copy();
+    setMaxMinReviews();
+  }
+
+  public void rollPlotData(float direction, boolean combined) {
+    Table data = dataToPlot.copy();
+    data.print();
+    PApplet.println("\n", combined);
+    if (!combined) {
+      if (direction > 0) {
+        data.clearRows();
+        int recordCount = 0;
+        for (TableRow row : dataToPlot.rows()) {
+          if (recordCount > 1) {
+            TableRow row1 = data.addRow();
+            for (int i = 0; i < row.getColumnCount(); i++) {
+              if (i < 15)
+                row1.setInt(i, row.getInt(i));
+              else
+                row1.setFloat(i, row.getFloat(i));
+            }
+          }
+          recordCount++;
+        }
+        for (TableRow row : dataToPlot.rows(new int[] { 0, 1 })) {
+          TableRow row1 = data.addRow();
+          for (int i = 0; i < row.getColumnCount(); i++) {
+            if (i < 15)
+              row1.setInt(i, row.getInt(i));
+            else
+              row1.setFloat(i, row.getFloat(i));
+          }
+        }
+      } else {
+        data.clearRows();
+        for (TableRow row : dataToPlot
+          .rows(new int[] { dataToPlot.getRowCount() - 2, dataToPlot.getRowCount() - 1 })) {
+          TableRow row1 = data.addRow();
+          for (int i = 0; i < row.getColumnCount(); i++) {
+            if (i < 15)
+              row1.setInt(i, row.getInt(i));
+            else
+              row1.setFloat(i, row.getFloat(i));
+          }
+        }
+        int recordCount = 0;
+        for (TableRow row : dataToPlot.rows()) {
+          if (recordCount < dataToPlot.getRowCount() - 2) {
+            TableRow row1 = data.addRow();
+            for (int i = 0; i < row.getColumnCount(); i++) {
+              if (i < 15)
+                row1.setInt(i, row.getInt(i));
+              else
+                row1.setFloat(i, row.getFloat(i));
+            }
+          }
+          recordCount++;
+        }
+      }
+    } else {
+      if (direction > 0) {
+        data.clearRows();
+        int recordCount = 0;
+        for (TableRow row : dataToPlot.rows()) {
+          if (recordCount != 0) {
+            TableRow row1 = data.addRow();
+            for (int i = 0; i < row.getColumnCount(); i++) {
+              if (i < 15)
+                row1.setInt(i, row.getInt(i));
+              else
+                row1.setFloat(i, row.getFloat(i));
+            }
+          }
+          recordCount++;
+        }
+        for (TableRow row : dataToPlot.rows(new int[] {0})) {
+          TableRow row1 = data.addRow();
+          for (int i = 0; i < row.getColumnCount(); i++) {
+            if (i < 15)
+              row1.setInt(i, row.getInt(i));
+            else
+              row1.setFloat(i, row.getFloat(i));
+          }
+        }
+      } else {
+        data.clearRows();
+        for (TableRow row : dataToPlot
+          .rows(new int[] { dataToPlot.getRowCount() - 1 })) {
+          TableRow row1 = data.addRow();
+          for (int i = 0; i < row.getColumnCount(); i++) {
+            if (i < 15)
+              row1.setInt(i, row.getInt(i));
+            else
+              row1.setFloat(i, row.getFloat(i));
+          }
+        }
+        int recordCount = 0;
+        for (TableRow row : dataToPlot.rows()) {
+          if (recordCount < dataToPlot.getRowCount() - 1) {
+            TableRow row1 = data.addRow();
+            for (int i = 0; i < row.getColumnCount(); i++) {
+              if (i < 15)
+                row1.setInt(i, row.getInt(i));
+              else
+                row1.setFloat(i, row.getFloat(i));
+            }
+          }
+          recordCount++;
+        }
+      }
+    }
+
+    dataToPlot.clearRows();
+    dataToPlot = data.copy();
+  }
+
+  private Table readDataFromMySQL(PApplet object) {
+    Table data = new Table();
+    String sql = "SELECT * FROM yelp_db.user_comments_agreegate";
+    try {
+      PreparedStatement statement = mysqlConnect.connect().prepareStatement(sql);
+      ResultSet rs = statement.executeQuery();
+
+      String[] columnName = { "user_creation_year", "elite_flag", "TotalReviews_2005", "TotalReviews_2006", 
+        "TotalReviews_2007", "TotalReviews_2008", "TotalReviews_2009", "TotalReviews_2010", 
+        "TotalReviews_2011", "TotalReviews_2012", "TotalReviews_2013", "TotalReviews_2014", 
+        "TotalReviews_2015", "TotalReviews_2016", "TotalReviews_2017" };
+
+      for (String column : columnName) {
+        data.addColumn(column, Table.FLOAT);
+      }
+      // System.out.println(columnName.length);
+      while (rs.next()) {
+        TableRow row = data.addRow();
+        // row.print();
+        for (int i = 0; i < columnName.length; i++) {
+          row.setFloat(i, rs.getFloat(i + 1));
+        }
+        // row.print();
+      }
+    } 
+    catch (SQLException e) {
+      e.printStackTrace();
+    } 
+    finally {
+      mysqlConnect.disconnect();
+    }
+    return data;
+  }
+
+  private Table readDataFromCSV(PApplet object) {
+    PApplet.print("Reading CSV file");
+    Table data = object.loadTable("user_comments_agreegate.csv", "header");
+    return data;
+  }
+
+  public void combineData() {
+    int recordCount = 0;
+    Table combined = dataToPlot.copy();
+    combined.clearRows();
+    for (TableRow row : dataToPlot.rows()) {
+      recordCount = (recordCount >= 2) ? 0 : recordCount;
+      if (recordCount == 0) {
+        TableRow newRow = combined.addRow();
+        for (int i = 0; i < row.getColumnCount(); i++) {
+          if (i <= 14)
+            newRow.setInt(i, row.getInt(i));
+          else
+            newRow.setFloat(i, row.getFloat(i));
+        }
+      } else {
+        int combinedIntVal;
+        float combinedFloatVal;
+        TableRow newRow = combined.getRow(combined.getRowCount() - 1);
+        for (int i = 0; i < row.getColumnCount(); i++) {
+          if (i <= 14 && i >= 2) {
+            combinedIntVal = row.getInt(i) + newRow.getInt(i);
+            newRow.setInt(i, combinedIntVal);
+          } else if (i > 14) {
+            newRow.setFloat(i, row.getFloat(i));
+            combinedFloatVal = row.getFloat(i) + newRow.getFloat(i);
+            if (combinedFloatVal > maxReviews)
+              maxReviews = combinedFloatVal;
+            if (combinedFloatVal > minReviews)
+              minReviews = combinedFloatVal;
+            newRow.setFloat(i, combinedFloatVal);
+          }
+        }
+      }
+      recordCount++;
+    }
+    dataToPlot.clearRows();
+    dataToPlot = combined.copy();
+    dataToPlot = transformData(dataToPlot, false);
+    setMaxMinReviews();
+  }
+
+  public void filterData(Integer[] array) {
+    Table data = transformedDataBackup.copy();
+    Table data1 = transformedDataBackup.copy();
+    data.clearRows();
+    int[][] groupedIntData = new int[2][13];
+    for (int i =0; i<groupedIntData.length; i++)
+      for (int j=0; j<groupedIntData[i].length; j++)
+        groupedIntData[i][j] = 0;
+    for (int i : array) {
+      TableRow record = data1.getRow(i);
+      for (int j=2; j<=14; j++) {
+        groupedIntData[record.getInt(1)][j-2] += record.getInt(j);
+      }
+    }
+    for (int count : new int[]{0, 1}) {
+      TableRow row = data.addRow();
+      row.setInt(0, 9999);
+      row.setInt(1, 0);
+      for (int j=2; j<=14; j++) {
+        row.setInt(j, groupedIntData[count][j-2]);
+      }
+    }
+    dataToPlot.clearRows();
+    dataToPlot = data.copy();
+    dataToPlot = transformData(dataToPlot, false);
+    setMaxMinReviews();
+  }
+}
